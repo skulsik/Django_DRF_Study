@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager as UserBaseManager
 from django.db import models
 from django.apps import apps
+from django.utils.translation import gettext_lazy as _
 
 from services.utils import NULLABLE
 
@@ -45,12 +46,18 @@ class UserManager(UserBaseManager):
         return self._create_user(email, password, **extra_fields)
 
 
+class UserStatus(models.TextChoices):
+    QUEST = 'quest', _('quest')
+    MODERATOR = 'moderator', _('moderator')
+
+
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name='почта')
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
     phone = models.CharField(max_length=35, verbose_name='телефон', **NULLABLE)
     country = models.CharField(max_length=50, verbose_name='страна', **NULLABLE)
+    status = models.CharField(max_length=9, choices=UserStatus.choices, default=UserStatus.QUEST)
     email_verify = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
