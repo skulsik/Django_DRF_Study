@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 
+from config import settings
 from services.utils import NULLABLE
 
 
@@ -10,6 +11,7 @@ class Course(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     preview = models.ImageField(upload_to='school/', verbose_name='Превью(картинка)', **NULLABLE)
     description = models.CharField(max_length=1000, verbose_name='Описание')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True, verbose_name='Признак отображения')
 
     def __str__(self):
@@ -26,6 +28,7 @@ class Lesson(models.Model):
     preview = models.ImageField(upload_to='school/', verbose_name='Превью(картинка)', **NULLABLE)
     description = models.CharField(max_length=1000, verbose_name='Описание')
     url = models.URLField(max_length=255, verbose_name='Ссылка на видео')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True, verbose_name='Признак отображения')
 
     def __str__(self):
@@ -52,7 +55,7 @@ class Payments(models.Model):
         verbose_name='Оплаченный курс или урок'
     )
 
-    payment_amount = models.IntegerField(default=0, verbose_name='Сумма оплаты')
+    payment_amount = models.PositiveIntegerField(default=0, verbose_name='Сумма оплаты')
 
     payment_method_list: list = [
         ('cash', 'Наличные'),
