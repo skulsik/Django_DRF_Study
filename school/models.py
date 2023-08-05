@@ -27,7 +27,7 @@ class Lesson(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     preview = models.ImageField(upload_to='school/', verbose_name='Превью(картинка)', **NULLABLE)
     description = models.CharField(max_length=1000, verbose_name='Описание')
-    url = models.URLField(max_length=255, verbose_name='Ссылка на видео')
+    url = models.URLField(max_length=255, verbose_name='Ссылка на видео', **NULLABLE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True, verbose_name='Признак отображения')
 
@@ -37,6 +37,19 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = 'Урок'
         verbose_name_plural = 'Уроки'
+
+
+class Subscription(models.Model):
+    """ Модель подписки пользователя на определенный курс  """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f'Объект Subscription: user - {self.user}, course -{self.course}'
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
 
 
 class Payments(models.Model):
