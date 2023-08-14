@@ -1,12 +1,24 @@
+from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
-from school.models import Lesson
+from school.models import Lesson, Course, Subscription
+from users.models import User
 
 
 class LessonTestCase(APITestCase):
-    def setUp(self) -> None:
-        pass
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            email='user@test.com',
+            password='0000'
+        )
+        self.client.force_authenticate(user=self.user)
+        self.lesson = Lesson.objects.create(
+            name='test',
+            description='test',
+            url='https://www.youtube.com'
+        )
 
     def test_view_list_lesson(self):
         """ Тест получение списка уроков """
@@ -22,13 +34,14 @@ class LessonTestCase(APITestCase):
         """ Тест создания урока """
         data = {
             'name': 'test',
-            'description': 'test'
+            'description': 'test',
+            'url': 'https://www.youtube.com',
+            'owner': 1
         }
         response = self.client.post(
-            '/lesson/create/',
+            reverse('school:lesson_create'),
             data=data
         )
-        print(response.json())
         self.assertEqual(
             response.status_code,
             status.HTTP_201_CREATED
@@ -36,12 +49,8 @@ class LessonTestCase(APITestCase):
 
     def test_view_lesson(self):
         """ Тест получение урока """
-        Lesson.objects.create(
-            name='test',
-            description='test'
-        )
         response = self.client.get(
-            '/lesson/1/'
+            '/lesson/5/'
         )
         self.assertEqual(
             response.status_code,
@@ -50,21 +59,54 @@ class LessonTestCase(APITestCase):
 
         self.assertEqual(
             response.json(),
-            {'id': 1, 'name': 'test', 'preview': None, 'description': 'test', 'url': None, 'owner': None, 'is_active': True}
+            {'id': 5, 'name': 'test', 'preview': None, 'description': 'test', 'url': 'https://www.youtube.com', 'owner': None, 'is_active': True}
         )
 
     def test_delete_lesson(self):
         """ Тест удаления урока """
         Lesson.objects.create(
             name='test',
+            description='test',
+            url='https://www.youtube.com'
+        )
+        response = self.client.delete(
+            '/lesson/delete/4/'
+        )
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
+
+
+class SubscriptionTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(email='user@test.com', password='0000')
+        self.client.force_authenticate(user=self.user)
+
+        self.course = Course.objects.create(
+            name='test',
             description='test'
         )
-        print(Lesson.objects.all())
+
+    def test_create_subscription(self):
+        """ Тест создания подписки """
+        user_list = User.objects.all()
+        print(f'user id: {user_list[0].id}')
+        course_list = Course.objects.all()
+        print(f'user id: {course_list[0].id}')
+        data = {
+            'user': 5,
+            'course': 1
+        }
         response = self.client.post(
-            '/lesson/delete/1/'
+            reverse('school:subscription_create'),
+            data=data
         )
+        course_list = Course.objects.all()
+        print(f'user id: {course_list}')
         print(response.json())
         self.assertEqual(
             response.status_code,
-            status.HTTP_200_OK
+            status.HTTP_201_CREATED
         )

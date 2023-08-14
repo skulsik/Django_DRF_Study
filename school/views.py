@@ -13,7 +13,7 @@ class CourseViewSet(ModelViewSet):
     """ Простой ViewSet-класс """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]#IsAuthenticated]
     pagination_class = CoursePaginator
 
 
