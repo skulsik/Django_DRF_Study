@@ -54,7 +54,7 @@ class Subscription(models.Model):
 
 class Payments(models.Model):
     """ Модель платежа """
-    user = models.CharField(max_length=100, verbose_name='Пользователь')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     date_pay = models.DateTimeField(default=datetime.datetime.now(), verbose_name='Дата платежа')
 
     name_of_payment_list: list = [
