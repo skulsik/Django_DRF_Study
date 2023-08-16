@@ -10,14 +10,15 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 class CourseViewSet(ModelViewSet):
-    """ Простой ViewSet-класс """
+    """ Класс курса """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    permission_classes = [AllowAny]#IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = CoursePaginator
 
 
 class SubscriptionCreateAPIView(CreateAPIView):
+    """ Создание подписки """
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
 
@@ -28,13 +29,15 @@ class SubscriptionCreateAPIView(CreateAPIView):
 
 
 class SubscriptionDestroyAPIView(DestroyAPIView):
+    """ Удаление подписки """
     queryset = Subscription.objects.all()
     permission_classes = [IsAuthenticated]
 
 
 class LessonCreateAPIView(CreateAPIView):
+    """ Создание урока """
     serializer_class = LessonSerializer
-    permission_classes = [AllowAny]#IsAuthenticated, IsStaffCreate]
+    permission_classes = [IsAuthenticated, IsStaffCreate]
 
     def perform_create(self, serializer):
         lesson = serializer.save()
@@ -43,37 +46,42 @@ class LessonCreateAPIView(CreateAPIView):
 
 
 class LessonListAPIView(ListAPIView):
+    """ Список уроков """
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [AllowAny]#IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = LessonPaginator
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
+    """ Вывод одного урока """
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [AllowAny]#IsAuthenticated, IsOwner | IsStaff]
+    permission_classes = [IsAuthenticated, IsOwner | IsStaff]
 
 
 class LessonUpdateAPIView(UpdateAPIView):
+    """ Обновление урока """
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [AllowAny]#IsAuthenticated, IsOwner | IsStaff]
+    permission_classes = [IsAuthenticated, IsOwner | IsStaff]
 
 
 class LessonDestroyAPIView(DestroyAPIView):
+    """ Удаление урока """
     queryset = Lesson.objects.all()
-    permission_classes = [AllowAny]#IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
 
 class PaymentsViewSet(ModelViewSet):
-    """ Простой ViewSet-класс """
+    """ Класс платежа """
     serializer_class = PaymentsSerializer
     queryset = Payments.objects.all()
     permission_classes = [IsAuthenticated]
 
 
 class PaymentsListAPIView(ListAPIView):
+    """ Список платежей """
     serializer_class = PaymentsSerializer
     queryset = Payments.objects.all()
     permission_classes = [IsAuthenticated]
