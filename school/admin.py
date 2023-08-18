@@ -4,7 +4,7 @@ from school.models import *
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'owner', 'is_active')
+    list_display = ('id', 'name', 'description', 'owner', 'is_active')
 
 
 @admin.register(Lesson)
