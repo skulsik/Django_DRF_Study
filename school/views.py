@@ -1,4 +1,6 @@
 from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -7,6 +9,8 @@ from school.paginators import LessonPaginator, CoursePaginator
 from school.permissions import IsOwner, IsStaff, IsStaffCreate
 from school.serializers import *
 from rest_framework.permissions import IsAuthenticated, AllowAny
+
+from services.payment import GetPaymentLink
 
 
 class CourseViewSet(ModelViewSet):
@@ -88,3 +92,15 @@ class PaymentsListAPIView(ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date_pay', 'name_of_payment', 'payment_method']
     ordering_fields = ['date_pay']
+
+
+class PaymentGetLink(APIView):
+    """ Получение ссылки на платеж """
+    def get(self, request, id, price):
+        # Получает курс по id
+        course = Course.objects.get(id=id)
+        # Создает посредством StripeAPI продукт и цену, получает ссылку на оплату курса
+        payment_link = GetPaymentLink(name=course.name, price=price)
+
+        return Response({
+            'payment_link': payment_link.get_link(), })

@@ -23,4 +23,6 @@ urlpatterns = [
 
     path('subscription/create/', SubscriptionCreateAPIView.as_view(), name='subscription_create'),
     path('subscription/delete/<int:pk>/', SubscriptionDestroyAPIView.as_view(), name='subscription_delete'),
+
+    path('payment/<int:id>/<int:price>/', PaymentGetLink.as_view(), name='get_payment_link'),
 ] + router.urls
