@@ -13,6 +13,8 @@ router.register(r'course', CourseViewSet, basename='course')
 router.register(r'payments', PaymentsViewSet, basename='payments')
 
 urlpatterns = [
+    path('course/update/<int:pk>/', CourseUpdateAPIView.as_view(), name='course_update'),
+
     path('lesson/create/', LessonCreateAPIView.as_view(), name='lesson_create'),
     path('lesson/', LessonListAPIView.as_view(), name='lesson_list'),
     path('lesson/<int:pk>/', LessonRetrieveAPIView.as_view(), name='lesson_view'),

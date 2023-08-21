@@ -10,6 +10,7 @@ from school.permissions import IsOwner, IsStaff, IsStaffCreate
 from school.serializers import *
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from school.tasks import messaging_update_course
 from services.payment import GetPaymentLink
 
 
@@ -19,6 +20,19 @@ class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     permission_classes = [IsAuthenticated]
     pagination_class = CoursePaginator
+
+
+class CourseUpdateAPIView(UpdateAPIView):
+    """ Обновление курса """
+    serializer_class = CourseSerializer
+    queryset = Course.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        new_course = serializer.save()
+        subscription_list = Subscription.objects.filter(course=new_course.id)
+        for subscription in subscription_list:
+            messaging_update_course.delay(email=subscription.user.email, course=subscription.course.name)
 
 
 class SubscriptionCreateAPIView(CreateAPIView):
